@@ -62,7 +62,8 @@ section.main > div.block-container {
 }
 
 /* Hide Streamlit branding */
-#MainMenu, footer, header { visibility: hidden; }
+#MainMenu, footer { visibility: hidden; }
+header { background: transparent !important; }
 .stDeployButton { display: none !important; }
 
 /* ── Main Container ─────────────────────────────────────────── */
