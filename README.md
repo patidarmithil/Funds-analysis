@@ -58,20 +58,6 @@ The application will automatically open in your default web browser at `http://l
 
 ---
 
-## 🌐 Deployment
-
-This application is built with Streamlit and is best deployed using **Streamlit Community Cloud**. 
-
-**Note:** Deployment platforms meant for static sites or serverless functions (like Vercel) are not recommended, as Streamlit requires a continuously running Python server.
-
-### Deploying to Streamlit Community Cloud (Free & Easy)
-1. Push this repository to GitHub. Ensure `app.py`, `config.py`, `requirements.txt`, and the folders (`app_pages/`, `modules/`, `styles/`) are in the root directory.
-2. Go to [share.streamlit.io](https://share.streamlit.io/) and log in with your GitHub account.
-3. Click **"New app"**, select your repository, branch, and set the Main file path to `app.py`.
-4. Click **Deploy**. Streamlit will automatically install the requirements and host your application.
-
----
-
 ## 📂 Project Structure
 
 ```text
