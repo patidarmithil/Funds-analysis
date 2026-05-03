@@ -1,0 +1,309 @@
+/* ═══════════════════════════════════════════════════════════════
+   FundScope — Professional Financial Dashboard Theme
+   Dark Mode default. Light Mode via [data-theme="light"] on <html>
+═══════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ── Dark Mode Variables (default) ─────────────────────────── */
+:root {
+    --bg-color:            #0a0e1a;
+    --sidebar-bg:          #0f1629;
+    --surface-color:       #0f1629;
+    --surface-color-2:     #162040;
+    --border-color:        #1e2d4d;
+    --text-main:           #e2e8f0;
+    --text-muted:          #94a3b8;
+    --primary-color:       #00d4ff;
+    --secondary-color:     #7c3aed;
+    --success-color:       #10b981;
+    --danger-color:        #ef4444;
+    --warning-color:       #f59e0b;
+    --card-shadow:         rgba(0, 0, 0, 0.4);
+    --hover-shadow:        rgba(0, 212, 255, 0.18);
+    --btn-text:            #00d4ff;
+    --tab-bg:              #0f1629;
+    --input-bg:            #162040;
+}
+
+/* ── Light Mode Variables ─────────────────────────────────── */
+.light-mode {
+    --bg-color:            #f0f4f8;
+    --sidebar-bg:          #ffffff;
+    --surface-color:       #ffffff;
+    --surface-color-2:     #e8eef6;
+    --border-color:        #cbd5e1;
+    --text-main:           #0f172a;
+    --text-muted:          #475569;
+    --primary-color:       #0284c7;
+    --secondary-color:     #7c3aed;
+    --success-color:       #059669;
+    --danger-color:        #dc2626;
+    --warning-color:       #d97706;
+    --card-shadow:         rgba(0, 0, 0, 0.08);
+    --hover-shadow:        rgba(2, 132, 199, 0.14);
+    --btn-text:            #0284c7;
+    --tab-bg:              #ffffff;
+    --input-bg:            #f1f5f9;
+}
+
+/* ── Global Reset ───────────────────────────────────────────── */
+html, body {
+    font-family: 'Inter', sans-serif !important;
+}
+
+/* ── Streamlit App Shell ────────────────────────────────────── */
+.stApp,
+.stApp > div,
+section.main > div.block-container {
+    background-color: var(--bg-color) !important;
+    color: var(--text-main) !important;
+    font-family: 'Inter', sans-serif !important;
+}
+
+/* Hide Streamlit branding */
+#MainMenu, footer, header { visibility: hidden; }
+.stDeployButton { display: none !important; }
+
+/* ── Main Container ─────────────────────────────────────────── */
+.main .block-container {
+    padding: 1.5rem 2rem 2rem 2rem !important;
+    max-width: 1400px !important;
+}
+
+/* ── Sidebar ────────────────────────────────────────────────── */
+section[data-testid="stSidebar"] {
+    background: var(--sidebar-bg) !important;
+    border-right: 1px solid var(--border-color) !important;
+}
+section[data-testid="stSidebar"] .block-container {
+    padding: 1.5rem 1rem !important;
+}
+section[data-testid="stSidebar"] * {
+    color: var(--text-main) !important;
+}
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] span,
+section[data-testid="stSidebar"] label {
+    color: var(--text-muted) !important;
+}
+
+/* ── All text elements ──────────────────────────────────────── */
+p, span, h1, h2, h3, h4, h5, h6, div,
+[data-testid="stMarkdownContainer"],
+[data-testid="stMarkdownContainer"] p {
+    color: var(--text-main) !important;
+}
+
+/* ── Metric Cards ───────────────────────────────────────────── */
+div[data-testid="metric-container"] {
+    background: linear-gradient(135deg, var(--surface-color) 0%, var(--surface-color-2) 100%) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    padding: 1rem 1.25rem !important;
+    box-shadow: 0 4px 12px var(--card-shadow) !important;
+    transition: all 0.2s ease !important;
+}
+div[data-testid="metric-container"]:hover {
+    box-shadow: 0 6px 20px var(--hover-shadow) !important;
+    transform: translateY(-1px) !important;
+}
+div[data-testid="metric-container"] label {
+    color: var(--text-muted) !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+}
+div[data-testid="metric-container"] [data-testid="stMetricValue"] {
+    color: var(--text-main) !important;
+    font-size: 1.6rem !important;
+    font-weight: 700 !important;
+}
+div[data-testid="metric-container"] [data-testid="stMetricDelta"] {
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+}
+
+/* ── KPI Card Component ─────────────────────────────────────── */
+.kpi-card {
+    background: linear-gradient(135deg, var(--surface-color) 0%, var(--surface-color-2) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px var(--card-shadow);
+}
+.kpi-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 20px var(--hover-shadow);
+    transform: translateY(-2px);
+}
+.kpi-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted) !important;
+    margin-bottom: 0.5rem;
+}
+.kpi-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-main) !important;
+    line-height: 1.1;
+}
+.kpi-delta-pos { color: var(--success-color) !important; font-size: 0.8rem; font-weight: 500; }
+.kpi-delta-neg { color: var(--danger-color)  !important; font-size: 0.8rem; font-weight: 500; }
+
+/* ── Section Header ─────────────────────────────────────────── */
+.section-header {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    color: var(--primary-color) !important;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* ── Page Title ─────────────────────────────────────────────── */
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-main) !important;
+    margin-bottom: 0.25rem;
+}
+.page-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-muted) !important;
+    margin-bottom: 1.5rem;
+}
+
+/* ── Tabs ───────────────────────────────────────────────────── */
+div[data-testid="stTabs"] button {
+    color: var(--text-muted) !important;
+    font-weight: 500 !important;
+    background: transparent !important;
+}
+div[data-testid="stTabs"] button[aria-selected="true"] {
+    color: var(--primary-color) !important;
+    border-bottom-color: var(--primary-color) !important;
+    background: var(--tab-bg) !important;
+}
+div[data-testid="stTabContent"] {
+    background: var(--surface-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 0 8px 8px 8px !important;
+    padding: 1.25rem !important;
+}
+
+/* ── Inputs: Selectbox, Multiselect, Slider ─────────────────── */
+div[data-baseweb="select"] > div {
+    background-color: var(--input-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-main) !important;
+}
+div[data-baseweb="select"] span {
+    color: var(--text-main) !important;
+}
+div[data-testid="stSlider"] > div > div > div {
+    background: var(--primary-color) !important;
+}
+input, textarea {
+    background: var(--input-bg) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+div[data-testid="stButton"] > button {
+    background: transparent !important;
+    border: 1px solid var(--primary-color) !important;
+    color: var(--btn-text) !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+}
+div[data-testid="stButton"] > button:hover {
+    background: var(--primary-color) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 16px var(--hover-shadow) !important;
+    transform: translateY(-1px) !important;
+}
+div[data-testid="stButton"] > button[kind="primary"] {
+    background: var(--primary-color) !important;
+    color: #ffffff !important;
+}
+
+/* ── Expander ────────────────────────────────────────────────── */
+div[data-testid="stExpander"] {
+    background: var(--surface-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+}
+div[data-testid="stExpander"] summary {
+    color: var(--text-main) !important;
+    font-weight: 600 !important;
+}
+
+/* ── DataFrames ──────────────────────────────────────────────── */
+div[data-testid="stDataFrame"] {
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+}
+div[data-testid="stDataFrame"] * {
+    color: var(--text-main) !important;
+}
+
+/* ── Alert/Info Boxes ─────────────────────────────────────────── */
+div[data-testid="stAlert"] {
+    background: var(--surface-color-2, var(--surface-color)) !important;
+    border-radius: 10px !important;
+    border-left-width: 4px !important;
+    color: var(--text-main) !important;
+}
+
+/* ── Checkbox ─────────────────────────────────────────────────── */
+div[data-testid="stCheckbox"] label {
+    color: var(--text-main) !important;
+}
+
+/* ── Model comparison badges ──────────────────────────────────── */
+.badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px;
+         font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+.badge-best { background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+.badge-good { background: rgba(245,158,11,0.12); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+.badge-poor { background: rgba(239, 68, 68,0.12); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+
+/* ── Formula block ───────────────────────────────────────────── */
+.formula-box {
+    background: var(--surface-color-2, var(--surface-color));
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin: 0.75rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--text-main) !important;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-color); }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }
+
+/* ── Progress bar ────────────────────────────────────────────── */
+div[data-testid="stProgressBar"] > div > div {
+    background: var(--primary-color) !important;
+}
+
+/* ── Caption / small text ────────────────────────────────────── */
+small, .stCaption, [data-testid="stCaptionContainer"] {
+    color: var(--text-muted) !important;
+}
