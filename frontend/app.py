@@ -23,6 +23,7 @@ if os.path.exists(_CSS_PATH):
 
 # ── Imports (after page config) ──────────────────────────────────────────────
 from modules.data_loader import load_all_funds
+import app_pages.home          as pg_home
 import app_pages.overview      as pg_overview
 import app_pages.analysis      as pg_analysis
 import app_pages.predictions   as pg_predictions
@@ -30,10 +31,12 @@ import app_pages.risk_analysis as pg_risk
 import app_pages.backtesting   as pg_backtest
 import app_pages.simulation    as pg_simulation
 import app_pages.manual        as pg_manual
+import app_pages.new_analysis  as pg_new_analysis
 import config
 
 # ── Navigation definition ────────────────────────────────────────────────────
 PAGES = {
+    "🏠  Home":             pg_home,
     "📊  Overview":         pg_overview,
     "📈  Analysis":         pg_analysis,
     "🤖  Predictions":      pg_predictions,
@@ -41,15 +44,25 @@ PAGES = {
     "🔁  Backtesting":      pg_backtest,
     "🌀  Simulation":       pg_simulation,
     "📚  User Manual":      pg_manual,
+    "🔍  New Analysis":     pg_new_analysis,
 }
 
 # ── Session state defaults ────────────────────────────────────────────────────
 if "page" not in st.session_state:
-    st.session_state.page = "📊  Overview"
+    st.session_state.page = "🏠  Home"
 if "uploaded_bytes" not in st.session_state:
     st.session_state.uploaded_bytes = None
 if "theme" not in st.session_state:
     st.session_state.theme = "Dark"
+# Live analysis mode
+if "data_mode" not in st.session_state:
+    st.session_state.data_mode = "default"
+if "live_funds_data" not in st.session_state:
+    st.session_state.live_funds_data = {}
+if "live_selected_funds" not in st.session_state:
+    st.session_state.live_selected_funds = []
+if "live_date_range" not in st.session_state:
+    st.session_state.live_date_range = (None, None)
 
 # ── Theme CSS Injection ──────────────────────────────────────────────────────
 _DARK_VARS = """
@@ -96,83 +109,98 @@ else:
     config.PLOTLY_LAYOUT.update(config.PLOTLY_DARK)
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# SIDEBAR
+# TOP HEADER & NAVIGATION
 # ═══════════════════════════════════════════════════════════════════════════════
-with st.sidebar:
-    # ── Logo / Brand ──────────────────────────────────────────────────────
+head_c1, head_c2, head_c3 = st.columns([5, 3, 2])
+with head_c1:
     st.markdown("""
-    <div style="text-align:center; padding: 0.5rem 0 1.5rem 0;">
-        <div style="font-size:2.2rem;">📈</div>
-        <div style="font-size:1.3rem; font-weight:700; color:var(--text-main); letter-spacing:0.05em;">
-            FundScope
-        </div>
-        <div style="font-size:0.72rem; color:var(--text-muted); letter-spacing:0.1em; text-transform:uppercase;">
-            Mutual Fund Analytics
+    <div style="display: flex; align-items: center; gap: 15px; padding: 0.5rem 0;">
+        <div style="font-size:2.5rem; line-height: 1;">📈</div>
+        <div>
+            <div style="font-size:1.6rem; font-weight:800; color:var(--text-main); letter-spacing:0.05em; line-height: 1.1;">
+                FundScope
+            </div>
+            <div style="font-size:0.8rem; color:var(--text-muted); letter-spacing:0.1em; text-transform:uppercase;">
+                Professional Mutual Fund Analytics
+            </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Theme Toggle ───────────────────────────────────────────────────────
-    t1, t2 = st.columns([2, 1])
-    with t1:
-        st.markdown('<p style="font-size:0.8rem; font-weight:600; margin-top:5px;">APPEARANCE</p>', unsafe_allow_html=True)
-    with t2:
-        new_theme = st.selectbox("Theme", ["Dark", "Light"], 
-                                 index=0 if st.session_state.theme == "Dark" else 1,
-                                 label_visibility="collapsed")
-        if new_theme != st.session_state.theme:
-            st.session_state.theme = new_theme
-            st.rerun()
+with head_c2:
+    st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+    if st.session_state.data_mode == "default":
+        st.info("📂 Data Mode: **Sample Report**")
+    elif st.session_state.live_funds_data:
+        n = len(st.session_state.live_funds_data)
+        st.success(f"🟢 Data Mode: **Live** ({n} fund{'s' if n > 1 else ''} loaded)")
+    else:
+        st.warning("🟡 Data Mode: **Live** (No data loaded)")
 
-    st.markdown("---")
-    st.markdown('<p class="section-header">Navigation</p>', unsafe_allow_html=True)
+with head_c3:
+    st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+    new_theme = st.selectbox("Appearance", ["Dark", "Light"], 
+                             index=0 if st.session_state.theme == "Dark" else 1,
+                             label_visibility="collapsed")
+    if new_theme != st.session_state.theme:
+        st.session_state.theme = new_theme
+        st.rerun()
 
-    # ── Nav buttons ────────────────────────────────────────────────────────
-    for page_name in PAGES:
-        is_active = st.session_state.page == page_name
-        # Note: custom CSS classes are hard with st.button, so we use session state logic
+st.markdown("---")
+
+# ── Nav buttons (Top Header) ──────────────────────────────────────────────
+# Calculate number of pages and create columns
+page_names = list(PAGES.keys())
+# Break into 2 rows if too many pages, or just 1 row. 9 pages is a lot for 1 row, let's use columns
+cols = st.columns(len(page_names))
+for i, page_name in enumerate(page_names):
+    is_active = st.session_state.page == page_name
+    with cols[i]:
         if st.button(
             page_name,
             key=f"nav_{page_name}",
             use_container_width=True,
-            type="secondary" if not is_active else "primary"
+            type="primary" if is_active else "secondary"
         ):
             st.session_state.page = page_name
             st.rerun()
 
-    st.markdown("---")
+st.markdown("---")
 
-    # ── Data source ────────────────────────────────────────────────────────
-    st.markdown('<p class="section-header">Data Source</p>', unsafe_allow_html=True)
-
-    uploaded = st.file_uploader(
-        "Upload custom data.xlsx",
-        type=["xlsx"],
-        help="Sheets must be named after funds with 'Date' and 'NAV' columns.",
-    )
-    if uploaded is not None:
-        st.session_state.uploaded_bytes = uploaded.getvalue()
-        st.success("Custom file loaded ✓")
-    else:
-        if st.session_state.uploaded_bytes is None:
-            if os.path.exists(config.DEFAULT_FILE):
-                st.info("Using default data.xlsx")
-            else:
-                st.warning("No data file found. Please upload.")
-
-    st.markdown("---")
-    st.caption("v1.1 · Professional Analytics")
+# ── Data source upload (default mode only) ────────────────────────────────
+if st.session_state.data_mode == "default" and st.session_state.page != "🏠  Home":
+    with st.expander("⚙️ Data Settings & Custom Upload"):
+        uploaded = st.file_uploader(
+            "Upload custom data.xlsx",
+            type=["xlsx"],
+            help="Sheets must be named after funds with 'Date' and 'NAV' columns.",
+        )
+        if uploaded is not None:
+            st.session_state.uploaded_bytes = uploaded.getvalue()
+            st.success("Custom file loaded ✓")
+        else:
+            if st.session_state.uploaded_bytes is None:
+                if os.path.exists(config.DEFAULT_FILE):
+                    st.info("Using default data.xlsx")
+                else:
+                    st.warning("No data file found. Please upload.")
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # RENDER CONTENT
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
+# ── Resolve which fund dict to pass to the current page ──────────────────────
 with st.spinner("Loading fund data…"):
-    # load_all_funds is already cached in data_loader.py
-    all_funds = load_all_funds(st.session_state.uploaded_bytes)
+    if st.session_state.data_mode == "live" and st.session_state.live_funds_data:
+        # Live mode: use data fetched from mfapi.in via FastAPI backend
+        all_funds = st.session_state.live_funds_data
+    else:
+        # Default mode (or live mode before any data is loaded)
+        all_funds = load_all_funds(st.session_state.uploaded_bytes)
 
-if not all_funds:
+# For the New Analysis page, all_funds being empty is fine (the page handles it)
+if not all_funds and st.session_state.page != "🔍  New Analysis":
     st.error("⚠️ Could not load any fund data.")
     st.stop()
 

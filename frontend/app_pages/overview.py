@@ -30,12 +30,22 @@ def render(all_funds: dict):
     # ── Top KPI row ────────────────────────────────────────────────────────
     cols = st.columns(5)
     _kpi(cols[0], "Total Funds",      len(all_funds),    suffix="",  fmt=".0f")
-    best = summary['ret_1y'].dropna().idxmax()
-    _kpi(cols[1], "Best Fund (1Y)",   summary.loc[best, 'ret_1y'], suffix="%", name=best[:12])
-    worst = summary['ret_1y'].dropna().idxmin()
-    _kpi(cols[2], "Worst Fund (1Y)",  summary.loc[worst,'ret_1y'], suffix="%", name=worst[:12])
-    _kpi(cols[3], "Avg Sharpe",       summary['sharpe'].mean(),    fmt=".2f")
-    _kpi(cols[4], "Avg Max Drawdown", summary['max_drawdown'].mean()*100, suffix="%", fmt=".1f")
+    ret_1y_clean = summary['ret_1y'].dropna() if 'ret_1y' in summary.columns else pd.Series()
+    if not ret_1y_clean.empty:
+        best = ret_1y_clean.idxmax()
+        best_val = summary.loc[best, 'ret_1y']
+        best_name = best[:12]
+        worst = ret_1y_clean.idxmin()
+        worst_val = summary.loc[worst, 'ret_1y']
+        worst_name = worst[:12]
+    else:
+        best_name, best_val = "N/A", np.nan
+        worst_name, worst_val = "N/A", np.nan
+
+    _kpi(cols[1], "Best Fund (1Y)",   best_val, suffix="%" if not pd.isna(best_val) else "", name=best_name)
+    _kpi(cols[2], "Worst Fund (1Y)",  worst_val, suffix="%" if not pd.isna(worst_val) else "", name=worst_name)
+    _kpi(cols[3], "Avg Sharpe",       summary['sharpe'].mean() if 'sharpe' in summary.columns else np.nan,    fmt=".2f")
+    _kpi(cols[4], "Avg Max Drawdown", (summary['max_drawdown'].mean()*100) if 'max_drawdown' in summary.columns else np.nan, suffix="%", fmt=".1f")
 
     st.markdown("---")
 
