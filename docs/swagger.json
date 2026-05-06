@@ -1,0 +1,361 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FundScope Backend",
+    "description": "FastAPI proxy for mfapi.in \u2014 powers the FundScope Streamlit dashboard",
+    "version": "2.0.0"
+  },
+  "paths": {
+    "/mf/health": {
+      "get": {
+        "tags": [
+          "Meta"
+        ],
+        "summary": "Health",
+        "description": "Quick health-check to confirm the backend is running.",
+        "operationId": "health_mf_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mf/schemes": {
+      "get": {
+        "tags": [
+          "Mutual Funds"
+        ],
+        "summary": "Get All Schemes",
+        "description": "Returns the full list of all Indian MF schemes (~17k) from mfapi.in.\nCalled once per Streamlit session; Streamlit caches the result for 24h.",
+        "operationId": "get_all_schemes_mf_schemes_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SchemeItem"
+                  },
+                  "type": "array",
+                  "title": "Response Get All Schemes Mf Schemes Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mf/search": {
+      "get": {
+        "tags": [
+          "Mutual Funds"
+        ],
+        "summary": "Search Schemes",
+        "description": "Search Indian MF schemes by name via mfapi.in search proxy.\nFired on every keystroke after 2+ characters in the Streamlit search box.",
+        "operationId": "search_schemes_mf_search_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 0,
+              "default": "",
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SchemeItem"
+                  },
+                  "title": "Response Search Schemes Mf Search Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mf/fetch-batch": {
+      "post": {
+        "tags": [
+          "Mutual Funds"
+        ],
+        "summary": "Fetch Batch",
+        "description": "Fetch full NAV history for N selected funds in parallel (asyncio.gather).\nBody: { funds: [{schemeCode, schemeName}], startDate?, endDate? }\nReturns: [{ fund, code, data: [{ds, y}], records, error? }]",
+        "operationId": "fetch_batch_mf_fetch_batch_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FundResult"
+                  },
+                  "type": "array",
+                  "title": "Response Fetch Batch Mf Fetch Batch Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BatchRequest": {
+        "properties": {
+          "funds": {
+            "items": {
+              "$ref": "#/components/schemas/SchemeItem"
+            },
+            "type": "array",
+            "title": "Funds"
+          },
+          "startDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Startdate"
+          },
+          "endDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enddate"
+          }
+        },
+        "type": "object",
+        "required": [
+          "funds"
+        ],
+        "title": "BatchRequest",
+        "examples": [
+          {
+            "endDate": "2023-10-01",
+            "funds": [
+              {
+                "schemeCode": 100027,
+                "schemeName": "Grindlays Super Saver Income Fund-GSSIF-Half Yearly Dividend"
+              }
+            ],
+            "startDate": "2023-01-01"
+          }
+        ]
+      },
+      "FundResult": {
+        "properties": {
+          "fund": {
+            "type": "string",
+            "title": "Fund"
+          },
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/NavPoint"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "records": {
+            "type": "integer",
+            "title": "Records"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fund",
+          "code",
+          "data",
+          "records"
+        ],
+        "title": "FundResult",
+        "examples": [
+          {
+            "code": 100027,
+            "data": [
+              {
+                "ds": "2023-10-01",
+                "y": 150.25
+              }
+            ],
+            "fund": "Grindlays Super Saver Income Fund-GSSIF-Half Yearly Dividend",
+            "records": 1
+          }
+        ]
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "NavPoint": {
+        "properties": {
+          "ds": {
+            "type": "string",
+            "title": "Ds"
+          },
+          "y": {
+            "type": "number",
+            "title": "Y"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ds",
+          "y"
+        ],
+        "title": "NavPoint",
+        "examples": [
+          {
+            "ds": "2023-10-01",
+            "y": 150.25
+          }
+        ]
+      },
+      "SchemeItem": {
+        "properties": {
+          "schemeCode": {
+            "type": "integer",
+            "title": "Schemecode"
+          },
+          "schemeName": {
+            "type": "string",
+            "title": "Schemename"
+          }
+        },
+        "type": "object",
+        "required": [
+          "schemeCode",
+          "schemeName"
+        ],
+        "title": "SchemeItem",
+        "examples": [
+          {
+            "schemeCode": 100027,
+            "schemeName": "Grindlays Super Saver Income Fund-GSSIF-Half Yearly Dividend"
+          }
+        ]
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

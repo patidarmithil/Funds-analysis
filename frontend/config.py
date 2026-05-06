@@ -16,6 +16,10 @@ FUND_NAMES = [
 # ─── Data ───────────────────────────────────────────────────────────────────
 DEFAULT_FILE = os.path.join(os.path.dirname(__file__), 'data.xlsx')
 
+# ─── Backend URL (FastAPI service) ──────────────────────────────────────────
+# Override with env var FUNDSCOPE_BACKEND_URL in production
+BACKEND_URL = os.getenv('FUNDSCOPE_BACKEND_URL', 'http://localhost:8000')
+
 # ─── Benchmarks ─────────────────────────────────────────────────────────────
 BENCHMARKS = {
     'Nifty 50':           '^NSEI',
