@@ -18,7 +18,7 @@ DEFAULT_FILE = os.path.join(os.path.dirname(__file__), 'data.xlsx')
 
 # ─── Backend URL (FastAPI service) ──────────────────────────────────────────
 # Override with env var FUNDSCOPE_BACKEND_URL in production
-BACKEND_URL = os.getenv('FUNDSCOPE_BACKEND_URL', 'http://localhost:8000')
+BACKEND_URL = os.getenv('FUNDSCOPE_BACKEND_URL', 'https://fundscopebackend-gbeybdd2gcd3egez.southeastasia-01.azurewebsites.net')
 
 # ─── Benchmarks ─────────────────────────────────────────────────────────────
 BENCHMARKS = {
