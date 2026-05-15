@@ -1,6 +1,21 @@
-fastapi>=0.111.0
-uvicorn[standard]>=0.29.0
-httpx>=0.27.0
-pydantic>=2.0.0
-python-dotenv>=1.0.0
-gunicorn>=21.0.0
+fastapi
+uvicorn[standard]
+httpx
+python-multipart
+pydantic
+python-dotenv
+
+# ML / analytics
+numpy
+pandas
+scikit-learn
+xgboost
+statsmodels
+scipy
+prophet
+joblib
+openpyxl
+yfinance
+
+# Supabase
+supabase

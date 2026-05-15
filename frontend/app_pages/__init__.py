@@ -1,1 +1,0 @@
-# FundScope pages package
