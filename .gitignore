@@ -1,5 +1,31 @@
+# Environment files
 .env
+.env.local
+.env.*.local
+
+# Python
 __pycache__/
+*.pyc
+*.pyo
 .venv/
 venv/
+*.egg-info/
+
+# Streamlit
 .streamlit/secrets.toml
+
+# Model files (large binary — train and upload manually)
+backend/models/*.pkl
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
