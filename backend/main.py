@@ -37,8 +37,12 @@ ALLOWED_ORIGINS = [
     "http://localhost:8501",          # Streamlit legacy (keep during transition)
     "http://127.0.0.1:8501",
     "https://fundscopefront.streamlit.app",
-    # "https://<your-app>.vercel.app",  # <-- uncomment and set after Vercel deploy
+    "https://fundscope-xi.vercel.app/"
 ]
+
+frontend_url = os.getenv("FRONTEND_URL")
+if frontend_url:
+    ALLOWED_ORIGINS.append(frontend_url)
 
 # Allow all origins in development if env var set
 if os.getenv("CORS_ALLOW_ALL", "").lower() == "true":
