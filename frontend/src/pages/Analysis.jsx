@@ -38,6 +38,29 @@ export default function Analysis() {
   const navData    = result?.nav_series || []
   const rollingData = result?.rolling   || []
 
+  // Calculate zero-offset for the rolling returns gradient
+  const rollingValues = rollingData
+    .map(d => parseFloat(d[activeTab]))
+    .filter(v => !isNaN(v))
+
+  let off = 0
+  if (rollingValues.length > 0) {
+    const dataMax = Math.max(...rollingValues)
+    const dataMin = Math.min(...rollingValues)
+
+    if (dataMax <= 0) {
+      off = 0 // All negative -> All Red
+    } else if (dataMin >= 0) {
+      off = 1 // All positive -> All Green
+    } else {
+      // Crosses zero
+      off = dataMax / (dataMax - dataMin)
+    }
+  } else {
+    off = 0.5 // Fallback
+  }
+
+
   return (
     <div className="page" id="page-analysis">
       <h1 className="page-title">📈 Analysis</h1>
@@ -116,6 +139,14 @@ export default function Analysis() {
           <div className="chart-card">
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={rollingData}>
+                <defs>
+                  <linearGradient id="colorSplit" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stopColor="#10b981" stopOpacity={1} />
+                    <stop offset={off} stopColor="#10b981" stopOpacity={1} />
+                    <stop offset={off} stopColor="#ef4444" stopOpacity={1} />
+                    <stop offset="1" stopColor="#ef4444" stopOpacity={1} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                 <XAxis dataKey="ds" tick={{ fill: 'var(--muted)', fontSize: 10 }}
                   tickFormatter={v => v?.slice(0,7)} interval="preserveStartEnd" />
@@ -124,7 +155,7 @@ export default function Analysis() {
                   formatter={(v) => [v != null ? `${v.toFixed(2)}%` : '—', `${activeTab} Return`]} />
                 <ReferenceLine y={0} stroke="var(--muted)" strokeDasharray="4 2" />
                 <Line type="monotone" dataKey={activeTab} name={`${activeTab} Return`}
-                  stroke="#00d4ff" dot={false} strokeWidth={1.5} connectNulls />
+                  stroke="url(#colorSplit)" dot={false} strokeWidth={2} connectNulls />
               </LineChart>
             </ResponsiveContainer>
           </div>

@@ -101,14 +101,14 @@ export default function Predictions() {
         {PREDICTION_MODELS.map(m => (
           <div key={m} className={`checkbox-item${selected.includes(m) ? ' checked' : ''}`}
             id={`chk-${m.replace(' ', '-')}`} onClick={() => toggleModel(m)}>
-            <span>{selected.includes(m) ? '☑' : '☐'}</span> {m}
+            <span></span> {m}
           </div>
         ))}
       </div>
       <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
         <div className={`checkbox-item${runEnsemble ? ' checked' : ''}`} id="chk-ensemble"
           style={{ width: 'auto' }} onClick={() => setRunEnsemble(v => !v)}>
-          {runEnsemble ? '☑' : '☐'} 🔀 Auto-Optimise Ensemble
+          🔀 Auto-Optimise Ensemble
         </div>
         <button className="btn btn-primary btn-full" id="btn-run-predict"
           onClick={run} disabled={!fund || !selected.length || running} style={{ maxWidth: 200 }}>
