@@ -1,77 +1,110 @@
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
-import { fmt } from '../utils/formatters'
 
 export default function Home() {
-  const { fundNames, defaultFunds, loading, setDataMode } = useApp()
+  const { setDataMode } = useApp()
   const navigate = useNavigate()
 
   return (
-    <div className="page" id="page-home">
-      <h1 className="page-title">📈 FundScope</h1>
-      <p className="page-subtitle">Professional Mutual Fund Analytics — AI-powered predictions, risk analysis & backtesting</p>
-
-      {/* ── Quick actions ── */}
-      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
-        <button
-          className="btn btn-primary"
-          id="btn-sample-report"
-          onClick={() => { setDataMode('default'); navigate('/overview') }}
-        >
-          📂 View Sample Report
-        </button>
-        <button
-          className="btn btn-secondary"
-          id="btn-live-analysis"
-          onClick={() => { setDataMode('live'); navigate('/new-analysis') }}
-        >
-          🔍 Analyse Live Fund
-        </button>
-      </div>
-
-      {/* ── Fund list ── */}
-      <p className="section-header">Available Sample Funds ({fundNames.length})</p>
-      {loading ? (
-        <div className="spinner-wrap"><div className="spinner" /></div>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '0.75rem' }}>
-          {fundNames.map((name, i) => {
-            const df = defaultFunds[name]
-            const lastNav = df ? df[df.length - 1]?.y : null
-            return (
-              <div
-                key={name}
-                className="kpi-card"
-                style={{ cursor: 'pointer' }}
-                onClick={() => navigate('/analysis')}
-              >
-                <div className="kpi-label">{name}</div>
-                <div className="kpi-value" style={{ fontSize: '1.1rem' }}>{fmt.nav(lastNav)}</div>
-              </div>
-            )
-          })}
+    <div className="landing-page" id="page-home">
+      
+      {/* ── Hero Section ── */}
+      <section className="hero-section">
+        <h1 className="hero-title">
+          The AI-Powered <span className="text-gradient">Analytics Engine</span><br />
+          for Mutual Funds.
+        </h1>
+        <p className="hero-subtitle">
+          Predict NAVs, analyze risk, and simulate portfolios with enterprise-grade machine learning models. Built for the modern investor.
+        </p>
+        
+        <div className="hero-cta">
+          <button
+            className="btn btn-glow"
+            id="btn-live-analysis"
+            onClick={() => { setDataMode('live'); navigate('/new-analysis') }}
+          >
+            Start Live Analysis ➔
+          </button>
+          <button
+            className="btn btn-secondary"
+            id="btn-sample-report"
+            onClick={() => { setDataMode('default'); navigate('/overview') }}
+            style={{ padding: '1rem 2rem', fontSize: '1.1rem', borderRadius: '30px' }}
+          >
+            View Sample Report
+          </button>
         </div>
-      )}
 
-      {/* ── Feature highlights ── */}
-      <hr className="divider" />
-      <p className="section-header">What FundScope does</p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem' }}>
-        {[
-          ['📊', 'Overview', 'KPI cards, returns table, correlation heatmap'],
-          ['📈', 'Analysis', 'Rolling returns, Alpha/Beta, benchmark comparison'],
-          ['🤖', 'Predictions', '8 ML models — Prophet, XGBoost, RF, SVR & ensemble'],
-          ['⚠️', 'Risk Analysis', 'VaR, CVaR, drawdown chart, stress testing'],
-          ['🔁', 'Backtesting', 'Lumpsum vs SIP vs Value Averaging'],
-          ['🌀', 'Monte Carlo', 'GBM simulation, percentile bands, probability stats'],
-        ].map(([icon, title, desc]) => (
-          <div key={title} className="chart-card" style={{ padding: '1rem' }}>
-            <div style={{ fontSize: '1.5rem', marginBottom: '0.4rem' }}>{icon}</div>
-            <div style={{ fontWeight: 700, marginBottom: '0.25rem' }}>{title}</div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>{desc}</div>
+        {/* ── Floating Dashboard Showcase ── */}
+        <div className="hero-visual">
+          <div className="floating-card fc-1">
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <div className="ui-skeleton-line" style={{ width: '120px' }}></div>
+              <div className="ui-skeleton-line" style={{ width: '60px' }}></div>
+            </div>
+            <div className="ui-skeleton-chart"></div>
+            <div className="ui-skeleton-line" style={{ width: '80%', marginTop: '1rem' }}></div>
           </div>
-        ))}
-      </div>
+          
+          <div className="floating-card fc-2">
+            <div className="ui-skeleton-line" style={{ width: '80px', marginBottom: '0.5rem' }}></div>
+            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#10b981', marginBottom: '1rem' }}>+14.2%</div>
+            <div className="ui-skeleton-chart" style={{ borderBottomColor: '#10b981', background: 'linear-gradient(180deg, rgba(16,185,129,0.2) 0%, transparent 100%)' }}></div>
+          </div>
+
+          <div className="floating-card fc-3">
+            <div className="ui-skeleton-line" style={{ width: '100px', marginBottom: '1rem' }}></div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ef4444' }}>-2.1% VaR</div>
+            <div className="ui-skeleton-line" style={{ width: '100%', marginTop: 'auto' }}></div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Feature Grid ── */}
+      <section className="feature-grid">
+        <div className="feature-box">
+          <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🤖</div>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Machine Learning Predictions</h3>
+          <p style={{ color: 'var(--muted)', fontSize: '0.9rem', lineHeight: '1.5' }}>
+            Forecast future NAVs using advanced time-series models including Prophet, XGBoost, Random Forest, and custom auto-optimised ensembles.
+          </p>
+        </div>
+
+        <div className="feature-box">
+          <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>⚠️</div>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Deep Risk Analysis</h3>
+          <p style={{ color: 'var(--muted)', fontSize: '0.9rem', lineHeight: '1.5' }}>
+            Calculate Value at Risk (VaR), Conditional VaR (CVaR), and analyze historical drawdowns to understand maximum portfolio exposure.
+          </p>
+        </div>
+
+        <div className="feature-box">
+          <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🌀</div>
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Monte Carlo Simulations</h3>
+          <p style={{ color: 'var(--muted)', fontSize: '0.9rem', lineHeight: '1.5' }}>
+            Run thousands of Geometric Brownian Motion (GBM) simulations to visualize probability distributions and future performance bands.
+          </p>
+        </div>
+      </section>
+
+      {/* ── Footer ── */}
+      <footer className="site-footer">
+        <div style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'var(--text)' }}>
+          📈 FundScope
+        </div>
+        <p>Professional Mutual Fund Analytics Engine.</p>
+        <div className="footer-links">
+          <a href="#">Documentation</a>
+          <a href="#">API</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+        <p style={{ fontSize: '0.8rem', opacity: 0.6, marginTop: '1rem' }}>
+          &copy; {new Date().getFullYear()} FundScope. All rights reserved.
+        </p>
+      </footer>
+
     </div>
   )
 }

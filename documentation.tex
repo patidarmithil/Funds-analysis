@@ -1,0 +1,77 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{FundScope: A Cloud-Native Platform for Mutual Fund Analytics and Machine Learning-Based Forecasting\\}
+
+\author{\IEEEauthorblockN{1\textsuperscript{st} Mithil Patidar}
+\IEEEauthorblockA{\textit{School of Computer Science} \\
+\textit{Your University}\\
+City, Country \\
+Email: your.email@domain.com}
+}
+
+\maketitle
+
+\begin{abstract}
+The financial industry has witnessed a paradigm shift towards data-driven investment strategies. FundScope is a full-stack, cloud-native web application developed to provide comprehensive analytics, predictive modeling, and risk assessment for mutual fund portfolios. Leveraging an architecture that separates a high-performance React frontend from a robust FastAPI backend, the system integrates advanced machine learning algorithms (such as Prophet, ARIMA, and XGBoost) to forecast Net Asset Values (NAV). Furthermore, the platform incorporates Monte Carlo simulations and quantitative risk metrics (VaR and CVaR) to assist investors in navigating market volatility. This paper details the system architecture, workflows, machine learning pipeline, and future enhancement plans for FundScope.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Mutual Funds, Machine Learning, Forecasting, React, FastAPI, Monte Carlo Simulation, Cloud Computing.
+\end{IEEEkeywords}
+
+\section{Introduction}
+Mutual fund investment requires rigorous analysis of historical data, market trends, and risk factors. Traditional platforms often lack accessible, sophisticated predictive tools. FundScope addresses this gap by offering a decoupled, scalable architecture that provides real-time analytics, machine-learning-based forecasting, and probabilistic risk evaluation in an intuitive, glassmorphism-inspired interface. The transition from a monolithic Streamlit application to a React/FastAPI architecture enables enhanced scalability, seamless cross-origin communication, and efficient cloud deployment.
+
+\section{System Architecture}
+The architecture of FundScope is designed for high availability, modularity, and rapid computation.
+\subsection{Frontend (User Interface)}
+The presentation layer is built using React and Vite, deployed on Vercel. It employs an advanced aesthetic utilizing glassmorphism, dynamic data rendering through Recharts, and highly responsive components.
+\subsection{Backend (API and Analytics Engine)}
+The core logic resides in a Python-based FastAPI backend deployed on an Azure Cloud Server. The backend performs secure database interactions with Supabase (PostgreSQL), handles live data fetching via mfapi.in, and executes complex machine learning and statistical models using Pandas, Scikit-Learn, and Statsmodels.
+\subsection{Data Persistence}
+Supabase serves as the primary database, ensuring scalable, low-latency access to user preferences and cached mutual fund historical data.
+
+\section{Methodology and Workflows}
+\subsection{Data Ingestion and Processing}
+Upon a client request, the React frontend issues REST API calls to the FastAPI backend. The backend retrieves the necessary historical NAV data. If the data is absent or stale, the backend fetches live data, normalizes it, and caches it in Supabase for subsequent requests.
+\subsection{Machine Learning Forecasting}
+The forecasting module aggregates multiple lightweight models to predict future NAV values. It employs Auto-ARIMA for statistical time-series forecasting, Facebook Prophet for handling seasonality and holiday effects, and XGBoost to capture non-linear market patterns. An ensemble strategy aggregates these predictions to minimize variance and improve predictive accuracy.
+\subsection{Risk Assessment and Simulation}
+FundScope implements strict quantitative measures for risk evaluation:
+\begin{itemize}
+    \item \textbf{Value at Risk (VaR) \& Conditional VaR (CVaR):} Evaluates the maximum expected loss over a specific time horizon at a given confidence interval.
+    \item \textbf{Monte Carlo Simulations:} Generates thousands of stochastic random walks based on historical volatility and drift to project a probability distribution of future asset values.
+\end{itemize}
+
+\section{Implementation Details}
+The system enforces strict request validation via Pydantic schemas. Cross-Origin Resource Sharing (CORS) is explicitly configured to facilitate secure communication between the Vercel-hosted frontend and the Azure-hosted backend. The user interface leverages customized CSS for premium styling, providing dynamic micro-animations and seamless theme toggling.
+
+\section{Future Plans}
+The development roadmap for FundScope includes several critical advancements:
+\begin{enumerate}
+    \item \textbf{Deep Learning Integration:} Incorporating LSTM (Long Short-Term Memory) networks and Transformers to enhance non-linear pattern recognition in volatile markets.
+    \item \textbf{Real-time Sentiment Analysis:} Integrating natural language processing (NLP) to analyze financial news and social media sentiment, incorporating these features into the forecasting models.
+    \item \textbf{Portfolio Optimization:} Developing automated algorithms based on Modern Portfolio Theory (MPT) to suggest optimal asset allocations that maximize the Sharpe ratio.
+    \item \textbf{Mobile Application:} Expanding the platform's reach by developing a React Native mobile application, sharing the existing FastAPI backend.
+\end{enumerate}
+
+\section{Conclusion}
+FundScope represents a robust, cloud-native solution for mutual fund analysis. By integrating modern web technologies (React, FastAPI) with sophisticated quantitative finance models, it provides investors with a powerful, accessible tool for decision-making. The decoupled architecture ensures that the system is highly scalable and ready for future integrations of advanced deep learning and NLP techniques.
+
+\begin{thebibliography}{00}
+\bibitem{b1} R. S. Tsay, \textit{Analysis of Financial Time Series}, 3rd ed. Hoboken, NJ, USA: Wiley, 2010.
+\bibitem{b2} S. J. Taylor and B. Letham, ``Forecasting at Scale,'' \textit{The American Statistician}, vol. 72, no. 1, pp. 37-45, 2018.
+\bibitem{b3} T. Chen and C. Guestrin, ``XGBoost: A Scalable Tree Boosting System,'' in \textit{Proc. of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 2016, pp. 785-794.
+\end{thebibliography}
+
+\end{document}

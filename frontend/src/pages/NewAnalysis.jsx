@@ -84,22 +84,16 @@ export default function NewAnalysis() {
       {schemes.length > 0 && (
         <>
           <p className="section-header">Results ({schemes.length}) — click to select</p>
-          <div style={{ maxHeight: 320, overflowY: 'auto', border: '1px solid var(--border)', borderRadius: 10, marginBottom: '1rem' }}>
+          <div className="checkbox-grid" style={{ maxHeight: 320, overflowY: 'auto', padding: '1rem', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: 16, marginBottom: '1rem', background: 'var(--surface)' }}>
             {schemes.map(s => {
               const isSel = selected.find(x => x.schemeCode === s.schemeCode)
               return (
                 <div key={s.schemeCode}
                   onClick={() => toggleScheme(s)}
-                  style={{
-                    padding: '0.65rem 1rem', cursor: 'pointer', fontSize: '0.83rem',
-                    borderBottom: '1px solid var(--border)',
-                    background: isSel ? 'rgba(0,212,255,0.08)' : 'var(--surface)',
-                    color: isSel ? 'var(--primary)' : 'var(--text)',
-                    display: 'flex', alignItems: 'center', gap: 10,
-                  }}
+                  className={`checkbox-item${isSel ? ' checked' : ''}`}
+                  style={{ textAlign: 'left', justifyContent: 'flex-start', padding: '0.8rem 1.2rem', minHeight: '80px', alignItems: 'flex-start' }}
                 >
-                  <span>{isSel ? '☑' : '☐'}</span>
-                  <span>[{s.schemeCode}] {s.schemeName}</span>
+                  {s.schemeName}
                 </div>
               )
             })}
